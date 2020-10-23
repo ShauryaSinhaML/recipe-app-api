@@ -8,8 +8,14 @@ ENV PYTHONUNBUFFERED 1
 # here we will be copying requirements.txt from the current directory
 # into our focker container in a file called requirements.txt
 COPY ./requirements.txt /requirements.txt
+# install postgresql client
+RUN apk add --update --no-cache postgresql-client
+RUN apk add --update --no-cache --virtual .tmp-build-deps \
+      gcc libc-dev linux-headers postgresql-dev
 #we will eun the file in the container
 RUN pip install -r /requirements.txt
+# delete the temp dependencies
+RUN apk del .tmp-build-deps
 
 # we will create a directory in the container
 RUN mkdir /app
